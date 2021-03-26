@@ -1,0 +1,119 @@
+反转从位置 m 到 n 的链表。请使用一趟扫描完成反转。
+
+说明:
+1 ≤ m ≤ n ≤ 链表长度。
+
+示例:
+
+输入: 1->2->3->4->5->NULL, m = 2, n = 4
+输出: 1->4->3->2->5->NULL
+
+来源：力扣（LeetCode）
+链接：https://leetcode-cn.com/problems/reverse-linked-list-ii
+著作权归领扣网络所有。商业转载请联系官方授权，非商业转载请注明出处。
+
+
+/**
+ * Definition for singly-linked list.
+ * public class ListNode {
+ *     int val;
+ *     ListNode next;
+ *     ListNode() {}
+ *     ListNode(int val) { this.val = val; }
+ *     ListNode(int val, ListNode next) { this.val = val; this.next = next; }
+ * }
+ */
+class Solution {
+    public ListNode reverseBetween(ListNode head, int left, int right) {
+        ListNode reverselist = new ListNode(-1); // 定义一个虚拟的链表头
+        reverselist.next = head;
+
+        int i = left - 1;
+        int j = right - 1;
+
+        ListNode leftnode, rightnode;//定义左右两个断开的节点
+	
+      //求左节点的前一个pre，并求其和左节点
+        ListNode pre = reverselist; 
+        for(int k=0;k<i;k++){
+            pre = pre.next;
+        }
+        leftnode = pre.next;
+
+	//求右节点和其后一个节点aft
+        rightnode = reverselist.next;
+        for(int k=0;k<j;k++){
+            rightnode = rightnode.next;
+        }
+        ListNode aft = rightnode.next;
+	
+	//断开前后，截取需要反转的部分
+        pre.next = null;
+        rightnode.next = null;
+
+	//反转链表的过程
+        ListNode poi = leftnode.next;
+        ListNode poi2 = leftnode;
+        while(poi != null){
+            ListNode temp = poi.next;
+            poi.next = poi2;
+            poi2 = poi;
+            poi = temp;
+        }
+
+	//连上原来的部分
+        pre.next = rightnode;
+        leftnode.next = aft;
+
+	//返回链表头
+        return reverselist.next;
+    }
+}
+
+
+
+
+解法二：使用栈进行存储
+
+
+class Solution {
+    public ListNode reverseBetween(ListNode head, int left, int right) {
+        ListNode reverse = new ListNode(-1);
+        reverse.next = head;
+        Stack<ListNode> list = new Stack<ListNode>();
+        ListNode poi = reverse;
+        int num = 0;
+        ListNode leftnode = null;
+        ListNode rightNode = null;
+        while(poi != null){
+            if(num == left-1){
+                leftnode = poi;
+            }else if(num == right+1){
+                rightNode = poi;
+            }
+            if(num >= left && num <= right){
+                ListNode temp = poi;
+                poi = poi.next;
+                num++;
+                temp.next = null;
+                list.push(temp);
+                continue;
+            }
+            poi = poi.next;
+            num++;
+        }
+        if(leftnode != null){
+            poi = leftnode;
+            poi.next = null;
+        }else{
+            poi = reverse.next;
+        }
+        while(!list.isEmpty()){
+            poi.next = list.pop();
+            poi = poi.next;
+        }
+        poi.next = rightNode;
+        return reverse.next;
+    }
+}
+

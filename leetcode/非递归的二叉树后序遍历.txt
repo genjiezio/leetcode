@@ -1,0 +1,72 @@
+给定一个二叉树，返回它的 后序 遍历。
+
+示例:
+
+输入: [1,null,2,3]  
+   1
+    \
+     2
+    /
+   3 
+
+输出: [3,2,1]
+进阶: 递归算法很简单，你可以通过迭代算法完成吗？
+
+来源：力扣（LeetCode）
+链接：https://leetcode-cn.com/problems/binary-tree-postorder-traversal
+著作权归领扣网络所有。商业转载请联系官方授权，非商业转载请注明出处。
+
+
+
+/**
+ * Definition for a binary tree node.
+ * public class TreeNode {
+ *     int val;
+ *     TreeNode left;
+ *     TreeNode right;
+ *     TreeNode() {}
+ *     TreeNode(int val) { this.val = val; }
+ *     TreeNode(int val, TreeNode left, TreeNode right) {
+ *         this.val = val;
+ *         this.left = left;
+ *         this.right = right;
+ *     }
+ * }
+ */
+class Solution {
+    public List<Integer> postorderTraversal(TreeNode root) {
+        List<Integer> list = new ArrayList<Integer>();
+	
+	//利用stack实现迭代解法。对于后序，lastnode用于记录最后一个被pop的点
+        Stack<TreeNode> treeStack = new Stack<TreeNode>();
+        TreeNode node = root;
+        TreeNode lastNode = root;
+
+        while(node != null || !treeStack.isEmpty()){
+	
+	//遍历完左树
+            while(node != null){
+                treeStack.push(node);
+                node = node.left;
+            }
+
+	//对根节点判断是否可以pop
+            if(!treeStack.isEmpty()){
+                node = treeStack.peek();
+	 
+	//
+                if(node.right == null || node.right == lastNode){
+                    list.add(node.val);
+                    lastNode = node;
+                    treeStack.pop();
+                    node = null;
+                }else{
+                    node = node.right;
+                }
+            }
+        }
+        return list;
+    }
+}
+
+
